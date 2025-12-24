@@ -51,18 +51,5 @@ public class OrderService {
         }
     }
 
-    private void addOrderItems(int orderId, List<OrderItem> items) throws SQLException {
-        String sql = "INSERT INTO order_item(order_id, dish_id, quantity, price) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            for (OrderItem item : items) {
-                statement.setInt(1, orderId);
-                statement.setInt(2, item.getDish().getId());
-                statement.setInt(3, item.getQuantity());
-                statement.setDouble(4, item.getPrice());
-                statement.addBatch();
-            }
-            statement.executeBatch();
-        }
-    }
 }
 
