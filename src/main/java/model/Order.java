@@ -16,6 +16,6 @@ public class Order {
     private Customer customer;
     private Date date;
     private double totalPrice;
-    private Status status;
+    private Status status = Status.PENDING;
 
 }
