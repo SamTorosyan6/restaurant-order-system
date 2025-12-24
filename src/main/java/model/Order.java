@@ -14,7 +14,7 @@ public class Order {
 
     private int id;
     private Customer customer;
-    private Date date;
+    private Date date = new Date();
     private double totalPrice;
     private Status status = Status.PENDING;
 

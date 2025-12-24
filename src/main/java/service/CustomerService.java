@@ -13,7 +13,7 @@ public class CustomerService {
 
     public void addCustomer(Customer customer) {
 
-        String sql = "INSERT INTO customer(name,phone,email) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO customer(name, phone, email) VALUES (?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
