@@ -50,4 +50,24 @@ public class CustomerService {
         return customers;
     }
 
+    public Customer getCustomerById(int id){
+
+        String sql = "SELECT * FROM customer WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                Customer customer = new Customer();
+                customer.setId(resultSet.getInt("id"));
+                customer.setName(resultSet.getString("name"));
+                customer.setPhone(resultSet.getString("phone"));
+                customer.setEmail(resultSet.getString("email"));
+                return customer;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
 }

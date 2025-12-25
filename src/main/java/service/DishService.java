@@ -1,12 +1,12 @@
 package service;
 
 import db.DBConnectionProvider;
+import enums.Category;
 import model.Dish;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DishService {
 
@@ -20,7 +20,7 @@ public class DishService {
             statement.setString(1, dish.getName());
             statement.setString(2, dish.getCategory().name().toUpperCase());
             statement.setString(3, String.valueOf(dish.getPrice()));
-            statement.setString(4, String.valueOf(dish.isAvailable()));
+            statement.setBoolean(4, dish.isAvailable());
             statement.execute();
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
@@ -37,6 +37,7 @@ public class DishService {
         String sql = "DELETE FROM dish WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
+            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -45,16 +46,57 @@ public class DishService {
 
     public void updateDish(Dish dish) {
 
-        String sql = "UPDATE dish SET name = ?, set category = ?, set price = ?, set available = ? WHERE id = ?";
+        String sql = "UPDATE dish SET name = ?, category = ?, price = ?, available = ? WHERE id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, dish.getName());
             statement.setString(2, String.valueOf(dish.getCategory()).toUpperCase());
             statement.setString(3, String.valueOf(dish.getPrice()));
-            statement.setString(4, String.valueOf(dish.isAvailable()));
+            statement.setBoolean(4, dish.isAvailable());
+            statement.setInt(5, dish.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Dish: " + dish.getName() + " was successfully changed!");
+    }
+
+    public List<Dish> getAllDishes() {
+        String sql = "SELECT * FROM dish";
+        List<Dish> dishes = new ArrayList<>();
+        try (Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                Dish dish = new Dish();
+                dish.setId(resultSet.getInt("id"));
+                dish.setName(resultSet.getString("name"));
+                dish.setCategory(Category.valueOf(resultSet.getString("category")));
+                dish.setPrice(resultSet.getDouble("price"));
+                dishes.add(dish);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dishes;
+    }
+
+    public Dish getDishById(int id) {
+        String sql = "SELECT * FROM dish WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                Dish dish = new Dish();
+                dish.setId(resultSet.getInt("id"));
+                dish.setName(resultSet.getString("name"));
+                dish.setCategory(Category.valueOf(resultSet.getString("category")));
+                dish.setPrice(resultSet.getDouble("price"));
+                return dish;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
