@@ -19,7 +19,7 @@ public class DishService {
         try (PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, dish.getName());
             statement.setString(2, dish.getCategory().name().toUpperCase());
-            statement.setString(3, String.valueOf(dish.getPrice()));
+            statement.setDouble(3, dish.getPrice());
             statement.setBoolean(4, dish.isAvailable());
             statement.execute();
             ResultSet resultSet = statement.getGeneratedKeys();
@@ -41,7 +41,7 @@ public class DishService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("Dish with ID:" + "has been removed successfully");
+        System.out.println("Dish with ID:" + id + " has been removed successfully");
     }
 
     public void updateDish(Dish dish) {
@@ -73,6 +73,7 @@ public class DishService {
                 dish.setName(resultSet.getString("name"));
                 dish.setCategory(Category.valueOf(resultSet.getString("category")));
                 dish.setPrice(resultSet.getDouble("price"));
+                dish.setAvailable(resultSet.getBoolean("available"));
                 dishes.add(dish);
             }
         } catch (SQLException e) {
